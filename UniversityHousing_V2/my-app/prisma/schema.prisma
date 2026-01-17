@@ -1,0 +1,166 @@
+// University Housing Management System - Database Schema
+// SQLite database for Electron desktop application
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./app.db"
+}
+
+// ============================================
+// USER MANAGEMENT & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String    // bcrypted hash
+  name          String
+  role          String    @default("SUPERVISOR")
+  isActive      Boolean   @default(true)
+  
+  // Relations
+  createdRequests   Request[]     @relation("RequestCreator")
+  resolvedRequests  Request[]     @relation("RequestResolver")
+  logs              Log[]
+  notifications     Notification[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([email])
+}
+
+// ============================================
+// STUDENT MANAGEMENT
+// ============================================
+
+model Student {
+  id                String    @id @default(cuid())
+  registrationNumber String  @unique // 10 digits
+  nationalId        String    @unique // 8-15 alphanumeric
+  
+  // Personal Information
+  nameAr            String
+  nameEn            String
+  email             String    @unique
+  phone             String?
+  
+  // Academic Information
+  academicYear      Int
+  university        String    @default("GOVERNMENT")
+  roomType          String    @default("STANDARD")
+  status            String    @default("ACTIVE")
+  
+  // Housing Information
+  roomNumber        String?   // 1-10 alphanumeric
+  checkInDate       DateTime?
+  
+  // Photo & Documentation
+  photoPath         String?   // Relative path stored, e.g., "student_photos/2024001.jpg"
+  
+  // Data Completeness Tracking
+  hasMissingData    Boolean   @default(false)
+  missingFields     String?   // JSON array of field names that need attention
+  
+  // Relations
+  deletionRequests   Request[]  @relation("StudentDeletionRequest")
+  logs              Log[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([registrationNumber, nationalId])
+  @@index([status])
+}
+
+// ============================================
+// ROOM MANAGEMENT
+// ============================================
+
+model Room {
+  id            String    @id @default(cuid())
+  roomNumber    String    @unique
+  floor         Int
+  capacity      Int       @default(2)
+  roomType      String    @default("STANDARD")
+  isOccupied    Boolean   @default(false)
+  currentCount  Int       @default(0)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([isOccupied])
+}
+
+// ============================================
+// REQUEST & APPROVAL WORKFLOW
+// ============================================
+
+model Request {
+  id            String    @id @default(cuid())
+  type          String    @default("DELETE_STUDENT")
+  status        String    @default("PENDING")
+  
+  // Target Data
+  studentId     String?   // For DELETE_STUDENT requests
+  student       Student?  @relation("StudentDeletionRequest", fields: [studentId], references: [id], onDelete: SetNull)
+  metadata      String    // JSON object with request-specific data
+  
+  // Workflow
+  requesterId   String    // User who created the request
+  requester     User      @relation("RequestCreator", fields: [requesterId], references: [id], onDelete: Cascade)
+  
+  resolverId    String?   // User who approved/rejected
+  resolver      User?     @relation("RequestResolver", fields: [resolverId], references: [id], onDelete: SetNull)
+  
+  rejectionReason String?
+  
+  createdAt     DateTime  @default(now())
+  resolvedAt    DateTime?
+  
+  @@index([status, requesterId])
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title         String
+  message       String
+  relatedId     String?   // Can link to request, student, etc.
+  
+  isRead        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  
+  @@index([userId, isRead])
+}
+
+// ============================================
+// AUDIT & LOGGING
+// ============================================
+
+model Log {
+  id            String    @id @default(cuid())
+  action        String    @default("OTHER")
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId     String?
+  student       Student?  @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  
+  // Details of what was changed
+  metadata      String    // JSON object with action-specific details
+  description   String?
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([userId, action, createdAt])
+}

@@ -1,0 +1,117 @@
+/* Print Styles - Phase 8 */
+/* Hide navigation and UI elements during printing */
+
+@media print {
+  /* Hide sidebar and navigation */
+  aside,
+  nav,
+  .sidebar,
+  .navbar {
+    display: none !important;
+  }
+
+  /* Hide action buttons and interactive elements */
+  button,
+  .btn,
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Show printable header */
+  .printable-header {
+    display: block !important;
+    page-break-after: always;
+  }
+
+  /* Hide printable header on screen */
+  @media screen {
+    .printable-header {
+      display: none !important;
+    }
+  }
+
+  /* Print-specific table styles */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 8px !important;
+    text-align: left !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  th {
+    background: #f5f5f5 !important;
+    font-weight: bold !important;
+  }
+
+  /* Remove background colors */
+  * {
+    background: transparent !important;
+    color: black !important;
+  }
+
+  /* Ensure text is visible */
+  h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+  }
+
+  p, span, div {
+    color: black !important;
+  }
+
+  /* Page layout */
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* Hide specific columns during print */
+  .print-hide-column {
+    display: none !important;
+  }
+
+  /* Ensure content fits on page */
+  .print-break {
+    page-break-before: always;
+  }
+
+  .print-no-break {
+    page-break-inside: avoid;
+  }
+
+  /* Table print optimization */
+  .print-table {
+    font-size: 10pt;
+  }
+
+  .print-table th,
+  .print-table td {
+    padding: 6px 8px !important;
+    border: 1px solid #ccc !important;
+  }
+
+  /* Status badges for print */
+  .print-badge {
+    border: 1px solid #000 !important;
+    padding: 2px 6px !important;
+    font-size: 9pt !important;
+    background: white !important;
+    color: black !important;
+  }
+}

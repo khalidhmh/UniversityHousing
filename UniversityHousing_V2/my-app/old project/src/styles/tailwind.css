@@ -1,0 +1,94 @@
+/**
+ * === استيراد الخطوط والمكتبات الخارجية ===
+ * Import External Fonts and Libraries
+ */
+
+/* استيراد خط Cairo من Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+/**
+ * === تكوين RTL والخطوط الخاصة ===
+ * RTL Configuration and Custom Fonts
+ */
+
+/**
+ * === قواعد نمط كاملة للتطبيق ===
+ * Global Styles for RTL Application
+ */
+
+html {
+  /* تحديد الخط الافتراضي للعربية */
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+body {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/**
+ * === دعم RTL عبر Tailwind ===
+ * RTL Support Utilities
+ * 
+ * استخدم:
+ * - flex-row-reverse (بدلاً من flex-row للعناصر RTL)
+ * - text-right (للنصوص)
+ * - direction-rtl (للاتجاه)
+ */
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/**
+ * === تأنيق النصوص العربية ===
+ * Arabic Text Enhancement
+ */
+
+/* تحسين قراءة النصوص العربية */
+.arabic-text {
+  font-family: 'Cairo', sans-serif;
+  letter-spacing: 0.3px;
+  line-height: 1.8;
+}
+
+/* عناوين عربية قوية */
+.arabic-heading {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/**
+ * === التوافقية مع التطبيقات السطح ===
+ * Desktop App Compatibility
+ */
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* تجنب التمرير على الشاشة الكاملة */
+html, body, #root {
+  height: 100vh;
+  overflow: hidden;
+}
+
